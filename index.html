@@ -3,9 +3,232 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Taka Income</title>
+
+<style>
+body{
+  margin:0;
+  background:#f5f6fa;
+  font-family:Arial, sans-serif;
+}
+
+/* HEADER */
+.header{
+  background:#fff;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#ff5b5b;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  overflow:hidden;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.balance{
+  color:#555;
+  font-size:14px;
+}
+
+/* CARDS */
+.cards{
+  display:flex;
+  gap:10px;
+  padding:15px;
+}
+
+.card{
+  flex:1;
+  background:#fff;
+  border-radius:12px;
+  padding:15px;
+  text-align:center;
+}
+
+.card h3{
+  margin:5px 0;
+  color:#1e90ff;
+}
+
+/* REF BOX */
+.ref-box{
+  background:#fff;
+  border-radius:12px;
+  padding:15px;
+  margin:15px;
+}
+
+.ref-link{
+  border:2px dashed #1e90ff;
+  padding:10px;
+  border-radius:8px;
+  font-size:13px;
+  word-break:break-all;
+}
+
+/* BUTTON BASE */
+.btn{
+  margin-top:10px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:999px;
+  font-size:16px;
+  color:#fff;
+  cursor:pointer;
+}
+
+/* 💖 COPY BUTTON GLOW */
+.copy{
+  background: linear-gradient(90deg,#ff4fd8,#8f4bff);
+  box-shadow:
+    0 0 10px rgba(255,79,216,0.7),
+    0 0 20px rgba(143,75,255,0.7),
+    0 0 35px rgba(143,75,255,0.9);
+  animation: copyGlow 2s infinite alternate;
+}
+
+@keyframes copyGlow{
+  from{
+    box-shadow:
+      0 0 8px rgba(255,79,216,0.6),
+      0 0 16px rgba(143,75,255,0.6);
+  }
+  to{
+    box-shadow:
+      0 0 18px rgba(255,79,216,1),
+      0 0 35px rgba(143,75,255,1),
+      0 0 55px rgba(143,75,255,1);
+  }
+}
+
+/* 💚 SHARE BUTTON GREEN GLOW */
+.share{
+  background:#2ecc71;
+  box-shadow:
+    0 0 10px rgba(46,204,113,0.6),
+    0 0 20px rgba(46,204,113,0.6),
+    0 0 35px rgba(46,204,113,0.9);
+  animation: shareGlow 2s infinite alternate;
+}
+
+@keyframes shareGlow{
+  from{
+    box-shadow:
+      0 0 8px rgba(46,204,113,0.5),
+      0 0 16px rgba(46,204,113,0.5);
+  }
+  to{
+    box-shadow:
+      0 0 18px rgba(46,204,113,1),
+      0 0 35px rgba(46,204,113,1),
+      0 0 55px rgba(46,204,113,1);
+  }
+}
+</style>
 </head>
+
 <body>
-<h1>Taka Income Web App</h1>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="avatar" id="avatar">U</div>
+  <div>
+    <b id="username">User</b> ✔️<br>
+    <span class="balance">
+      ব্যালেন্স: <b id="balance">৳0</b>
+    </span>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="cards">
+  <div class="card">
+    Daily Ads<br>
+    <h3 id="ads">0 / 20</h3>
+  </div>
+  <div class="card">
+    Total Referrals<br>
+    <h3 id="refs">0</h3>
+  </div>
+</div>
+
+<!-- REFERRAL -->
+<div class="ref-box">
+  <h3>Refer & Earn More!</h3>
+  <p>প্রতি রেফারে আয় 10 টাকা। নতুন ইউজারকে রেফার করুন আর টাকা আয় করুন।</p>
+
+  <div class="ref-link" id="reflink"></div>
+
+  <button class="btn copy" onclick="copyLink()">✨ Copy Referral Link</button>
+  <button class="btn share" onclick="shareLink()">🚀 Share Now</button>
+</div>
+
+<!-- TELEGRAM WEB APP -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+let tg = window.Telegram.WebApp;
+tg.ready();
+
+/* USER INFO */
+let user = tg.initDataUnsafe.user;
+
+let name = "User";
+let userId = "12345";
+let photo = "";
+
+if(user){
+  name = user.first_name + (user.last_name ? " " + user.last_name : "");
+  userId = user.id;
+  photo = user.photo_url;
+}
+
+document.getElementById("username").innerText = name;
+
+if(photo){
+  document.getElementById("avatar").innerHTML = `<img src="${photo}">`;
+}else{
+  document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
+}
+
+/* DAILY ADS */
+let maxAds = 20;
+let watchedAdsToday = 7;
+document.getElementById("ads").innerText = watchedAdsToday + " / " + maxAds;
+
+/* DEMO DATA */
+document.getElementById("balance").innerText = "৳00";
+document.getElementById("refs").innerText = "0";
+
+/* REFERRAL LINK */
+const link = `https://t.me/Realtakaincamebot?start=ref_${userId}`;
+document.getElementById("reflink").innerText = link;
+
+function copyLink(){
+  navigator.clipboard.writeText(link);
+  tg.showAlert("✅ Referral link copied!");
+}
+
+function shareLink(){
+  tg.openTelegramLink(`https://t.me/share/url?url=${link}`);
+}
+</script>
+
 </body>
 </html>
