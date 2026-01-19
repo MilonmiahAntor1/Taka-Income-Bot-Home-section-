@@ -10,6 +10,7 @@ body{
   margin:0;
   background:#f5f6fa;
   font-family:Arial, sans-serif;
+  padding-bottom:90px;
 }
 
 /* HEADER */
@@ -86,7 +87,7 @@ body{
   word-break:break-all;
 }
 
-/* BUTTON BASE */
+/* BUTTON */
 .btn{
   margin-top:10px;
   width:100%;
@@ -98,52 +99,38 @@ body{
   cursor:pointer;
 }
 
-/* 🔥 COPY GLOW */
+/* COPY */
 .copy{
   background:linear-gradient(90deg,#ff4fd8,#8f4bff);
-  animation: copyGlow 2s infinite alternate;
+  animation: glow1 2s infinite alternate;
 }
 
-@keyframes copyGlow{
-  from{
-    box-shadow:0 0 8px rgba(255,79,216,.6),
-               0 0 16px rgba(143,75,255,.6);
-  }
-  to{
-    box-shadow:0 0 18px rgba(255,79,216,1),
-               0 0 35px rgba(143,75,255,1),
-               0 0 55px rgba(143,75,255,1);
-  }
+@keyframes glow1{
+  from{box-shadow:0 0 10px rgba(255,79,216,.6);}
+  to{box-shadow:0 0 30px rgba(143,75,255,1);}
 }
 
-/* 🔥 SHARE GLOW */
+/* SHARE */
 .share{
   background:#2ecc71;
-  animation: shareGlow 2s infinite alternate;
+  animation: glow2 2s infinite alternate;
 }
 
-@keyframes shareGlow{
-  from{
-    box-shadow:0 0 8px rgba(46,204,113,.5),
-               0 0 16px rgba(46,204,113,.5);
-  }
-  to{
-    box-shadow:0 0 18px rgba(46,204,113,1),
-               0 0 35px rgba(46,204,113,1),
-               0 0 55px rgba(46,204,113,1);
-  }
+@keyframes glow2{
+  from{box-shadow:0 0 10px rgba(46,204,113,.6);}
+  to{box-shadow:0 0 30px rgba(46,204,113,1);}
 }
 
-/* TELEGRAM BUTTON */
+/* TG BUTTON */
 .tg-btn{
   margin:10px 15px;
   background:#fff;
   border-radius:12px;
-  padding:10px 12px;
+  padding:12px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  box-shadow:0 6px 14px rgba(0,0,0,0.08);
+  align-items:center;
+  box-shadow:0 6px 14px rgba(0,0,0,.08);
   cursor:pointer;
 }
 
@@ -151,7 +138,6 @@ body{
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:14px;
   font-weight:600;
 }
 
@@ -167,7 +153,6 @@ body{
 
 .tg-icon svg{
   width:14px;
-  height:14px;
   fill:#fff;
 }
 
@@ -204,7 +189,7 @@ body{
   <button class="btn share" onclick="shareLink()">🚀 Share Now</button>
 </div>
 
-<!-- JOIN TELEGRAM -->
+<!-- TELEGRAM -->
 <div class="tg-btn" onclick="joinTelegram()">
   <div class="tg-left">
     <div class="tg-icon">
@@ -215,7 +200,6 @@ body{
   <div class="tg-arrow">›</div>
 </div>
 
-<!-- TELEGRAM SUPPORT -->
 <div class="tg-btn" onclick="openSupport()">
   <div class="tg-left">
     <div class="tg-icon">
@@ -228,18 +212,48 @@ body{
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-let tg=window.Telegram.WebApp; tg.ready();
-let u=tg.initDataUnsafe.user||{};
-fullname.innerText=u.first_name||"User";
-tgUsername.innerText=u.username?"@"+u.username:"";
-avatar.innerHTML=u.photo_url?`<img src="${u.photo_url}">`:fullname.innerText[0];
-reflink.innerText=`https://t.me/Realtakaincamebot?start=ref_${u.id||0}`;
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  }
+const fullname   = document.getElementById("fullname");
+const tgUsername = document.getElementById("tgUsername");
+const avatar     = document.getElementById("avatar");
+const reflink    = document.getElementById("reflink");
 
-function copyLink(){navigator.clipboard.writeText(reflink.innerText);tg.showAlert("Copied!");}
-function shareLink(){tg.openTelegramLink("https://t.me/share/url?url="+reflink.innerText);}
-function joinTelegram(){tg.openTelegramLink("https://t.me/TakaIncomeCommunity");}
-function openSupport(){tg.openTelegramLink("https://t.me/TakaIncomeCommunity?direct");}
+console.log(tg?.initDataUnsafe);
+
+let u = tg?.initDataUnsafe?.user || {};
+
+fullname.innerText = u.first_name || "User";
+tgUsername.innerText = u.username ? "@" + u.username : "";
+avatar.innerHTML = u.photo_url
+  ? `<img src="${u.photo_url}">`
+  : (fullname.innerText[0] || "U");
+
+reflink.innerText =
+  `https://t.me/Realtakaincamebot?start=ref_${u.id || 0}`;
+
+function copyLink(){
+  navigator.clipboard.writeText(reflink.innerText);
+  tg && tg.showAlert("Copied!");
+}
+
+function shareLink(){
+  let url = "https://t.me/share/url?url=" + reflink.innerText;
+  tg ? tg.openTelegramLink(url) : window.open(url);
+}
+
+function joinTelegram(){
+  let url = "https://t.me/TakaIncomeCommunity";
+  tg ? tg.openTelegramLink(url) : window.open(url);
+}
+
+function openSupport(){
+  let url = "https://t.me/TakaIncomeCommunity?direct";
+  tg ? tg.openTelegramLink(url) : window.open(url);
+}
 </script>
 
 </body>
-</html>
